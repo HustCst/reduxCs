@@ -3,6 +3,9 @@ import React,{Component} from 'react';
 import ReactDom from 'react-dom';
 import rootReducer from './reducer/indexReducer.js';
 import FilterLink from './Components/FilterLink.js';
+import AddToDo from './Components/AddToDo.js';
+import ToDoList from './Components/ToDoList.js';
+import Footer from './Components/Footer.js';
 
 // react redux demo1
 
@@ -122,12 +125,12 @@ let store = createStore(rootReducer);
 
 
 // 切换 按钮 每次点击SHOW* 按钮时候都会触发重新渲染的函数所以也会执行下面的过滤函数
-const filterClick = (filter) => {
-    store.dispatch({
-        type: 'SET_VISIABLEFILTER',
-        filter: filter
-    })
-}
+// const filterClick = (filter) => {
+//     store.dispatch({
+//         type: 'SET_VISIABLEFILTER',
+//         filter: filter
+//     })
+// }
 
 // 过滤add 后添加的数据, 根据数据visableFilterText 过滤数据
 const filterToDoList = (toDoList, visiableFilterText) => {
@@ -154,22 +157,16 @@ class App extends Component {
         toDosList = filterToDoList(toDosList, visiableFilterText);
         return (
             <div>
-                <input type='text' ref='Inp'/>
-                <button onClick={ () => {
-                    store.dispatch({type: 'ADD_TODO', text: this.refs.Inp.value});
-                }}>Add</button>
-                <ul>
-                    {toDosList.map((item, key) => {
-                        return (
-                            <li style={ {textDecoration: item.completed ? 'line-through': 'none'} } key={item.id} onClick={ () => {store.dispatch({id: item.id, type: 'TOGGLE_TODO'})} }>
-                                {item.text}
-                            </li>
-                        );
-                    })}
-                </ul>
-                <FilterLink filterClick={filterClick} filter='SHOW_ALL' currentFilter={visiableFilterText}>Show All</FilterLink>
-                <FilterLink filterClick={filterClick} filter='SHOW_COMPLETED' currentFilter={visiableFilterText}>Show Completed</FilterLink>
-                <FilterLink filterClick={filterClick} filter='SHOW_ACTIVE' currentFilter={visiableFilterText}>Show Active</FilterLink>
+                <AddToDo onClick={ (filterText) => {
+                    store.dispatch({type: 'ADD_TODO', text: filterText});
+                }}/>
+                <ToDoList toDosList={toDosList} onClick={(id) => {store.dispatch({id: id, type: 'TOGGLE_TODO'})} }/>
+                <Footer currentFilter={visiableFilterText} onClick={(filter) => {
+                    store.dispatch({
+                        type: 'SET_VISIABLEFILTER',
+                        filter: filter
+                    })
+                }}/>
             </div>
         )
     }
